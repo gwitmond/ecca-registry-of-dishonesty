@@ -1,0 +1,21 @@
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+{{ template "menu" }}
+<h1>Check a Certificate</h1>
+<p>Hello. Please use this form to check a client certificate.</p>
+
+<p>
+<form>
+<label>Identity pair: </label><input type="text" name="cn" size="30">
+<input type="submit" value="Check" />
+<br>
+<br>Use the form: username@@example.org
+</form>
+</p>
+
+{{ template "tracking" }}
+</body></html>
+ 

@@ -1,0 +1,17 @@
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+{{ template "menu" }}
+
+<h1>Ecca Registry of (Dis)honesty</h1>
+
+<p>Just a placeholder</p>
+
+<p>Please read: <a href="http://witmond.nl/eccentric-authentication/introduction.html">Eccentric Authentication</a>.</p>
+<p>With regards, Guido Witmond.</p>
+<p>Feel free to mail: info @ witmond.nl.</p>
+<hr />
+{{ template "tracking" }}
+</body></html>

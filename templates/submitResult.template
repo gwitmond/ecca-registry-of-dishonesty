@@ -1,0 +1,21 @@
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+{{ template "menu" }}
+<h1>These are the certificates we have</h1>
+<p>Hello. These are the certificates we have for {{ .CN }}</p>
+
+<p>
+{{ range .Certificates }}
+{{ . }}<br>
+There should only be ONE!
+{{ else }}
+There are no certificates at all.
+{{ end }}
+</p>
+
+{{ template "tracking" }}
+</body></html>
+ 
