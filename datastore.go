@@ -14,6 +14,7 @@ import (
 	"crypto/x509"
 	"log"
 	"os"
+	"strings"
 	
 	"github.com/gwitmond/eccentric-authentication"  // gives package name 'eccentric'
 
@@ -55,25 +56,33 @@ func (ds *Datastore) store(site, cn string, cert *x509.Certificate) error {
 		// TODO: make a way for the database to do the uniqueness validation instead of us.
 	}
 	// We don't have this certificate yet, insert it.
-	return ds.dbmap.Insert(&DBCert{Username: cn, Realm: site, Certificate: pemBytes})
+	//return ds.dbmap.Insert(&DBCert{Username: strings.ToLower(cn), Realm: strings.ToLower(site), Certificate: pemBytes})
+	return ds.insert(strings.ToLower(site), strings.ToLower(cn), pemBytes)
 }
 
 // Return the certificates but don't convert to x509.Certificate
 // structures, just output the strings. Caller needs to do the hard
 // work. Don't make it easy to DoS us.
-// args is site, cn, [certificate]
-func (ds *Datastore) get_certificates(args... interface{}) (certs []*DBCert, err error) {
+// arguments are site, cn, [certificate]
+// Caller must make site and cn lower case
+func (ds *Datastore) get_certificates(site, cn string, args... interface{}) (certs []*DBCert, err error) {
 	var query string
 	switch {
-	case len(args) == 2:
+	case len(args) == 0:
 		query = "SELECT * from certificates WHERE realm = ? AND username = ?"
-		
-	case len(args) == 3:
+		_, err = ds.dbmap.Select(&certs, query, strings.ToLower(site), strings.ToLower(cn))
+		if err != nil { return nil, err } 
+	case len(args) == 1:
 		query = "SELECT * from certificates WHERE realm = ? AND username = ? AND certificate = ?"
+		_, err = ds.dbmap.Select(&certs, query, strings.ToLower(site), strings.ToLower(cn), args[0])
+		if err != nil { return nil, err } 
+
 	}
- 
-	_, err = ds.dbmap.Select(&certs, query, args...)
-	if err != nil { return nil, err } 
 	return // certs, err
 }
 
+// Insert certificate but make the site and cn lower case. 
+// This matches expectations with email addresses.
+func (ds *Datastore) insert(site, cn string, pemBytes []byte) error {
+	return ds.dbmap.Insert(&DBCert{Username: strings.ToLower(cn), Realm: strings.ToLower(site), Certificate: pemBytes})
+}
