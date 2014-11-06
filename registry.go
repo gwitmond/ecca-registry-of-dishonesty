@@ -32,6 +32,8 @@ var ds *Datastore
 var configDir = flag.String("config", "certs", "Directory where the certificates are found.") 
 var hostname = flag.String("hostname", "registry-of-honesty.eccentric-authentication.org", "Hostname of the site. Prefix of the TLS server certificate and key file names.")
 var bindAddress = flag.String("bind", "[::]:1024", "Address and port number where to bind the listening socket.") 
+var dataStore = flag.String("database", "honesty.sqlite3", "Name of the Sqlite3 database file, relative to the current directory")
+
 // End of configuration
 
 var templates = template.Must(template.ParseFiles(
@@ -52,7 +54,7 @@ func init() {
 }
 
 func main() {
-	ds = DatastoreOpen("honesty.sqlite3")
+	ds = DatastoreOpen(*dataStore)
 
         log.Printf("Starting. Please visit %v", *bindAddress)
 	server6 := &http.Server{Addr: *bindAddress}
